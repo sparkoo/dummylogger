@@ -1,8 +1,8 @@
 FROM golang:1.13 AS builder
 WORKDIR /go/src
-COPY cmd/dummylogger.go .
-RUN go build -o /go/bin/dummylogger dummylogger.go
+COPY collector/* .
+RUN go build -o /go/bin/collector collector/collector.go
 
 FROM alpine:3
 COPY --from=builder /go/bin/dummylogger .
-CMD ["./dummylogger"]
+CMD ["./collector"]
