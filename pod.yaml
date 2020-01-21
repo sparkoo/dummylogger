@@ -24,6 +24,10 @@ spec:
       volumeMounts:
         - mountPath: "/root/log"
           name: log-storage
+#    - name: collector
+#      image: quay.io/mvala/logcollector:latest
+#      command:
+#        - "/go/bin/collector"
 
   volumes:
     - name: log-storage

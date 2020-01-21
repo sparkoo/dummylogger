@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: log
+  labels:
+    app: log
+spec:
+  selector:
+    matchLabels:
+      app: log
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: log
+    spec:
+      containers:
+        - name: l1
+          image: quay.io/mvala/dummylogger:latest
+          command:
+            - "/bin/sh"
+          args:
+            - "-c"
+            - "/dummylogger -loginterval=1500 -file=/root/log/l1.log 2>&1 | tee /root/log/l2out.log"
+          volumeMounts:
+            - mountPath: "/root/log"
+              name: log-storage
+        - name: l2
+          image: quay.io/mvala/dummylogger:latest
+          command:
+            - "/dummylogger"
+          args:
+            - "-loginterval=1000"
+            - "-file=/root/log/l2.log"
+            - "2>&1 | tee /root/log/l2out.log"
+          volumeMounts:
+            - mountPath: "/root/log"
+              name: log-storage
+
+      volumes:
+        - name: log-storage
+          persistentVolumeClaim:
+            claimName: pvc01
